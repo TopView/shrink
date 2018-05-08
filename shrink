@@ -1,0 +1,34 @@
+#!/bin/bash
+# shrink (i.e. resize) photos.  Makes directory, copies selected photos to it.  Then resizes them.
+
+
+# -- help & version -------------------------------------
+if [ "$1" = '--help' 	]; then echo "Usage:  shrink [-# | #%] [list of files]		#where '#' is a percentage factor or a new width in pixels"	; exit; fi
+if [ "$1" = '--version'	]; then echo "version 0.1"								; exit; fi
+
+
+# -- get width option if any
+if [ "${1:  0:1}" = '-' ]; then width=${1: 1}	; shift
+#	if [ ${1: -1:1} = '%' ]; then width=${1: 1}	; shift
+#	else 						  width=${1: 1}	; shift
+#	fi
+#else echo "Error: Missing reduction factor as first parameter.  Usage:  shrink [-nn | -nn%] <list of files>"; exit
+else echo "Missing reduction factor.  Using 50% as default."; width='50%'
+fi
+
+
+# -- Make directory and copy files to it ----------------
+[ -e "$width" ] && [ -f "$width" ] && (echo "Error:  '$width' already exists as a regular file."; exit)
+[ -e "$width" ] || mkdir "$width"
+
+if [ "$(echo $@)" = "" ]; then #echo "No files listed so processing all"; 
+	find . -maxdepth 1 -type f -exec cp "{}" "$width" \;		#Copy all to new subdir
+else
+	for f in "$@"; do 				 cp "$f" "$width"; done		#Copy just those specified
+fi
+
+# -- Now resize files in this new directory ------------
+cd "$width"
+echo -n "Defaulting to quality factor of 70.  Resizing..."
+mogrify -resize "$width" -quality 70 *		#Defaults to quality of 70
+echo "done"

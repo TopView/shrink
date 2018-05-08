@@ -1,10 +1,20 @@
 #!/bin/bash
 # shrink (i.e. resize) photos.  Makes directory, copies selected photos to it.  Then resizes them.
 
+# Requires ImageMagick's mogrify be installed first.
+
+# How to use:
+#	First cd to folder with photos in it, then enter something like one of these:
+#	type: shrink		#This uses the defaults: All files (all files must be images too), and 50% reduction
+#	type: shrink a b	#50% reduction on only files named a and b
+#	type: shrink -640	#reduce all files to 640 pixels wide
+#	type: shrink -640 a b	#reduce only file named a to 650 pixels wide
+#	type: shrink -25% b	#reduce only file named b to 25% of size it was
+
 
 # -- help & version -------------------------------------
 if [ "$1" = '--help' 	]; then echo "Usage:  shrink [-# | #%] [list of files]		#where '#' is a percentage factor or a new width in pixels"	; exit; fi
-if [ "$1" = '--version'	]; then echo "version 0.1"								; exit; fi
+if [ "$1" = '--version'	]; then echo "version 0.2"								; exit; fi
 
 
 # -- get width option if any
